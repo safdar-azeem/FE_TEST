@@ -1,0 +1,23 @@
+[
+    {
+        "name" : "savings",
+        "value" : "0",
+        "type" : "number",
+        "label" : "savings",
+        "placeholder" : "Please enter your savings"
+    },
+    {
+        "name" : "rate",
+        "value" : "0",
+        "type" : "number",
+        "label" : "rate",
+        "placeholder" : "Please enter your rate"
+    },
+    {
+        "name" : "years",
+        "value" : "0",
+        "type" : "number",
+        "label" : "years",
+        "placeholder" : "Please enter Years"
+    }
+]
