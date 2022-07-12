@@ -1,9 +1,11 @@
 import React from 'react'
+import GridComponent from '../components/Game/Grid.game'
+import HeaderGame from '../components/Game/Header.game'
 
 const Game = () => {
 	const columns = 20
 	const rows = 20
-	const [grid, setGrid] = React.useState<any[]>([])
+	const [grid, setGrid] = React.useState<boolean[][]>([])
 
 	const handleClick = (row: number, col: number) => {
 		const newGrid = [...grid]
@@ -41,44 +43,11 @@ const Game = () => {
 
 	return (
 		<div className='d-flex justify-content-center flex-column  align-items-center'>
-			<header className='my-4'>
-				<button
-					className='btn btn-outline-dark me-3'
-					onClick={handleGenerate}>
-					Generate
-				</button>
-				<button className='btn btn-outline-dark' onClick={handleClear}>
-					Clear
-				</button>
-			</header>
-			<section className='d-flex flex-wrap'>
-				{grid.length > 0 &&
-					grid.map((row: Array<boolean>, rowIndex: number) => {
-						return (
-							<div key={rowIndex}>
-								{row.map((cell: boolean, colIndex: number) => {
-									return (
-										<div
-											key={colIndex}
-											style={{
-												height: '30px',
-												width: '30px',
-												margin: '2px',
-											}}
-											onClick={() =>
-												handleClick(rowIndex, colIndex)
-											}
-											className={`rounded ${
-												cell
-													? 'bg-dark'
-													: 'bg-secondary bg-opacity-50'
-											} `}></div>
-									)
-								})}
-							</div>
-						)
-					})}
-			</section>
+			<HeaderGame
+				handleClear={handleClear}
+				handleGenerate={handleGenerate}
+			/>
+			<GridComponent grid={grid} handleClick={handleClick} />
 		</div>
 	)
 }
