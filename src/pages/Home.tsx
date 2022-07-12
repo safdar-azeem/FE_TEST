@@ -1,84 +1,62 @@
 import React from 'react'
+import Alert from '../components/reuseable/Alert'
+import FormInput from '../components/reuseable/FormInput'
+import isaForm from '../jsons/IsaForm.json'
+import { IFormInput } from '../types/formInput.type'
+import { createInitialState } from '../utils/createInitialState'
+
+interface IFormState {
+	savings: number
+	rate: number
+	years: number
+}
 
 const Home = () => {
-	const [savings, setSavings] = React.useState<number | undefined>(undefined)
-	const [rate, setRate] = React.useState<number | undefined>(undefined)
-	const [years, setYears] = React.useState<number | undefined>(undefined)
+	const [formValues, setFormValues] = React.useState<IFormState>(
+		createInitialState(isaForm)
+	)
 	const [result, setResult] = React.useState('')
 	const [error, setError] = React.useState('')
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target
+		setFormValues({ ...formValues, [name]: value })
+	}
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		setResult('')
-		if (!savings || !rate || !years) {
-			return setError('Please fill out all fields')
-		}
-		if (savings < 0 || rate < 0 || years < 0) {
-			return setError('Please fill with positive values')
-		}
+		const isValid = Object.values(formValues).some(
+			(value) => value <= 0 || value === ''
+		)
+		if (isValid)
+			return setError('Please fill out all fields with positive values')
+		const { savings, rate, years } = formValues
 		setResult((savings * (1 + rate / 100) ** years).toFixed(2))
 		setError('')
 	}
 
 	return (
 		<section className='mt-5 w-50 mx-auto'>
-			<form onSubmit={handleSubmit}>
-				<section className='mb-3'>
-					<label htmlFor='savings' className='form-label'>
-						Savings
-					</label>
-					<input
-						type='number'
-						className='form-control'
-						id='savings'
-						value={savings}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							setSavings(+e.target.value)
-						}
-						placeholder='Please enter your savings'
-					/>
-				</section>
-				<section className='mb-3'>
-					<label htmlFor='Rate' className='form-label'>
-						Rate
-					</label>
-					<input
-						type='number'
-						className='form-control'
-						id='Rate'
-						value={rate}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							setRate(+e.target.value)
-						}
-						placeholder='Please enter your rate'
-					/>
-				</section>
-				<section className='mb-3'>
-					<label htmlFor='Years' className='form-label'>
-						Years
-					</label>
-					<input
-						type='number'
-						className='form-control'
-						id='Years'
-						value={years}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							setYears(+e.target.value)
-						}
-						placeholder='Please enter years'
-					/>
-				</section>
+			<form onSubmit={handleSubmit} className='mb-4'>
+				{isaForm.map((input: IFormInput) => {
+					return (
+						<FormInput
+							input={input}
+							handleChange={handleChange}
+							value={formValues['name' as keyof IFormState]}
+						/>
+					)
+				})}
 				<button className='btn btn-dark w-100 btn mt-2' type='submit'>
 					Calculate
 				</button>
 			</form>
 			{(error || result) && (
-				<div
-					className={`alert mt-4 py-2 ${
-						error ? 'alert-danger' : 'alert-primary'
-					}`}>
-					{error || result}
-				</div>
+				<Alert
+					message={error || result}
+					variant={error ? 'danger' : 'primary'}
+				/>
 			)}
 		</section>
 	)
